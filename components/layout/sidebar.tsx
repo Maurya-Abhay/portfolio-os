@@ -1,4 +1,5 @@
- 'use client';
+'use client';
+
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -27,15 +28,25 @@ export function Sidebar() {
   }, [pathname]);
 
   function navigate(href: string) {
-    setPending(true);
-    router.prefetch(href);
+    if (pathname !== href) {
+      setPending(true);
+      router.prefetch(href);
+    }
   }
 
   return (
     <aside className="hidden w-52 shrink-0 border-r border-slate-200/80 bg-white/70 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/70 lg:block">
-      {pending && <div className="fixed left-0 top-0 z-[60] h-0.5 w-full overflow-hidden bg-blue-100 dark:bg-blue-950"><div className="h-full w-1/3 animate-[sidebar-progress_900ms_ease-in-out_infinite] bg-blue-500" /></div>}
+      {pending && (
+        <div className="fixed left-0 top-0 z-[60] h-0.5 w-full overflow-hidden bg-blue-100 dark:bg-blue-950">
+          <div className="h-full w-1/3 animate-[sidebar-progress_900ms_ease-in-out_infinite] bg-blue-500" />
+        </div>
+      )}
+      
       <div className="sticky top-0 flex h-screen flex-col p-3">
-        <Link href="/" className="mb-4 flex items-center gap-2 px-2 py-1.5 text-sm font-black tracking-tight text-slate-900 dark:text-slate-100">
+        <Link
+          href="/"
+          className="mb-4 flex items-center gap-2 px-2 py-1.5 text-sm font-black tracking-tight text-slate-900 dark:text-slate-100"
+        >
           <span className="text-slate-700 dark:text-slate-300">Portfolio</span>
           <span className="text-blue-600">OS</span>
         </Link>
@@ -47,7 +58,6 @@ export function Sidebar() {
               <Link
                 key={href}
                 href={href}
-                prefetch
                 onMouseEnter={() => router.prefetch(href)}
                 onFocus={() => router.prefetch(href)}
                 onClick={() => navigate(href)}

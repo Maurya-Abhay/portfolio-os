@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Loader2, CheckCircle2, ArrowRight } from 'lucide-react';
+import { CheckCircle2, ArrowRight, ShieldCheck, RefreshCw } from 'lucide-react';
 
 export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
   const router = useRouter();
@@ -32,14 +32,12 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
         return;
       }
 
-      // Trigger success animation state
       setSuccess(true);
 
-      // Smooth delay before redirecting to dashboard
       setTimeout(() => {
         router.push('/dashboard');
         router.refresh();
-      }, 1200);
+      }, 2000);
 
     } catch {
       setError('Could not connect to the server. Please try again.');
@@ -50,18 +48,24 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
   // Success Animation View
   if (success) {
     return (
-      <div className="mt-8 flex flex-col items-center justify-center py-8 text-center animate-in fade-in zoom-in duration-300">
-        <div className="flex size-14 items-center justify-center rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 mb-4 animate-bounce">
-          <CheckCircle2 className="size-8" />
+      <div className="mt-8 flex flex-col items-center justify-center py-6 text-center animate-in fade-in zoom-in duration-500">
+        <div className="relative flex size-16 items-center justify-center rounded-2xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-400 mb-5 shadow-lg shadow-emerald-500/20">
+          {/* Rotating ring around success icon */}
+          <div className="absolute inset-0 rounded-2xl border-2 border-emerald-400/60 border-t-transparent animate-spin" style={{ animationDuration: '3s' }} />
+          <CheckCircle2 className="relative size-8 animate-bounce" />
         </div>
-        <h3 className="text-xl font-bold text-white">
-          {mode === 'login' ? 'Welcome Back!' : 'Account Created!'}
+        
+        <h3 className="text-xl font-extrabold text-white tracking-tight">
+          {mode === 'login' ? 'Authentication Successful!' : 'Workspace Created!'}
         </h3>
-        <p className="mt-1 text-xs text-slate-400">
-          Initializing your private workspace...
+        
+        <p className="mt-1.5 text-xs text-slate-400 max-w-xs font-light">
+          Verifying security tokens & initializing your private control center...
         </p>
-        <div className="mt-6 flex items-center gap-2 text-xs font-semibold text-cyan-400">
-          <span>Redirecting to Dashboard</span>
+
+        <div className="mt-6 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-xs font-semibold text-cyan-400">
+          <ShieldCheck className="size-3.5" />
+          <span>Redirecting to Dashboard...</span>
           <ArrowRight className="size-3.5 animate-pulse" />
         </div>
       </div>
@@ -123,15 +127,21 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
       <button
         type="submit"
         disabled={loading}
-        className="mt-2 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-cyan-500 text-sm font-bold text-slate-950 shadow-lg shadow-cyan-500/20 transition-all duration-300 hover:bg-cyan-400 hover:shadow-cyan-500/40 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+        className="mt-2 relative group overflow-hidden inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-cyan-500 text-sm font-bold text-slate-950 shadow-lg shadow-cyan-500/20 transition-all duration-300 hover:bg-cyan-400 hover:shadow-cyan-500/40 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-80"
       >
+        {/* Subtle glowing moving background sweep when loading */}
+        {loading && (
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+        )}
+
         {loading ? (
           <>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <span>Please wait...</span>
+            {/* Rotating High-tech Icon */}
+            <RefreshCw className="h-4 w-4 animate-spin text-slate-950" />
+            <span className="relative z-10 tracking-wide">Establishing Secure Session...</span>
           </>
         ) : (
-          <span>{mode === 'login' ? 'Sign in to workspace' : 'Create account'}</span>
+          <span className="relative z-10">{mode === 'login' ? 'Sign in to workspace' : 'Create account'}</span>
         )}
       </button>
     </form>
