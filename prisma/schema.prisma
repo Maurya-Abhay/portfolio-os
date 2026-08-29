@@ -261,11 +261,11 @@ model Budget {
   month      Int
   year       Int
 
-  @@unique([userId, categoryId, month, year])
-  @@index([userId, year, month])
-
   user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   category FinanceCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, categoryId, month, year])
+  @@index([userId, year, month])
 }
 
 model Project {
