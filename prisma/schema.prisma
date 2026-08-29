@@ -1,0 +1,332 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum StudyStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+enum QuestionType {
+  MCQ
+  SCENARIO
+  DEBUGGING
+  OUTPUT
+  DSA
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String?
+  email        String   @unique
+  passwordHash String?
+  image        String?
+  githubUrl    String?
+  xUrl         String?
+  linkedinUrl  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  progress     StudyProgress[]
+  notes        StudyNote[]
+  targets      StudyTarget[]
+  attempts     TestAttempt[]
+  transactions Transaction[]
+  budgets      Budget[]
+  categories   FinanceCategory[]
+  projects     Project[]
+  skills       Skill[]
+  experiences  Experience[]
+  education    Education[]
+  achievements Achievement[]
+}
+
+model AppSetting {
+  key       String   @id
+  value     Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+}
+
+model StudyCategory {
+  id          String        @id @default(cuid())
+  name        String
+  slug        String        @unique
+  description String?
+  sortOrder   Int           @default(0)
+  modules     StudyModule[]
+  tests       Test[]
+}
+
+model StudyModule {
+  id          String  @id @default(cuid())
+  categoryId  String
+  name        String
+  description String?
+  sortOrder   Int     @default(0)
+
+  category StudyCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  topics   StudyTopic[]
+  tests    Test[]
+}
+
+model StudyTopic {
+  id                String  @id @default(cuid())
+  moduleId          String
+  title             String
+  slug              String
+  description       String?
+  example           String? @db.Text
+  codeExample       String? @db.Text
+  content           String? @db.Text
+  diagram           String? @db.Text
+  commonMistakes    String? @db.Text
+  practice          String? @db.Text
+  interviewQuestion String? @db.Text
+  difficulty        Int     @default(1)
+  sortOrder         Int     @default(0)
+
+  module    StudyModule     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  progress  StudyProgress[]
+  notes     StudyNote[]
+  questions Question[]
+  resources TopicResource[]
+
+  @@unique([moduleId, slug])
+}
+
+model StudyProgress {
+  id            String      @id @default(cuid())
+  userId        String
+  topicId       String
+  status        StudyStatus @default(NOT_STARTED)
+  startedAt     DateTime?
+  completedAt   DateTime?
+  revisionCount Int         @default(0)
+
+  user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic StudyTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, topicId])
+}
+
+model StudyNote {
+  id        String   @id @default(cuid())
+  userId    String
+  topicId   String?
+  title     String?
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic StudyTopic? @relation(fields: [topicId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([topicId])
+}
+
+model StudyTarget {
+  id          String      @id @default(cuid())
+  userId      String
+  title       String
+  type        String
+  dueDate     DateTime?
+  status      StudyStatus @default(NOT_STARTED)
+  createdAt   DateTime    @default(now())
+  completedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TopicResource {
+  id      String  @id @default(cuid())
+  topicId String
+  title   String
+  url     String
+  type    String?
+
+  topic StudyTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+}
+
+model Test {
+  id           String  @id @default(cuid())
+  categoryId   String?
+  moduleId     String?
+  title        String
+  description  String?
+  difficulty   Int     @default(1)
+  durationMin  Int?
+  passingScore Int     @default(70)
+
+  category  StudyCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  module    StudyModule?   @relation(fields: [moduleId], references: [id], onDelete: SetNull)
+  questions Question[]
+  attempts  TestAttempt[]
+}
+
+model Question {
+  id          String       @id @default(cuid())
+  testId      String
+  topicId     String?
+  type        QuestionType
+  question    String       @db.Text
+  options     Json?
+  answer      String       @db.Text
+  explanation String?      @db.Text
+  difficulty  Int          @default(1)
+
+  test    Test         @relation(fields: [testId], references: [id], onDelete: Cascade)
+  topic   StudyTopic?  @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  answers TestAnswer[]
+}
+
+model TestAttempt {
+  id             String    @id @default(cuid())
+  userId         String
+  testId         String
+  score          Float
+  totalQuestions Int
+  correctAnswers Int
+  wrongAnswers   Int
+  skipped        Int
+  startedAt      DateTime  @default(now())
+  completedAt    DateTime?
+
+  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  test    Test         @relation(fields: [testId], references: [id], onDelete: Cascade)
+  answers TestAnswer[]
+}
+
+model TestAnswer {
+  id             String  @id @default(cuid())
+  attemptId      String
+  questionId     String
+  selectedAnswer String?
+  isCorrect      Boolean
+  timeTakenSec   Int?
+
+  attempt  TestAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, questionId])
+}
+
+model FinanceCategory {
+  id        String          @id @default(cuid())
+  userId    String?
+  name      String
+  type      TransactionType
+  isDefault Boolean         @default(false)
+
+  user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+  budgets      Budget[]
+}
+
+model Transaction {
+  id            String          @id @default(cuid())
+  userId        String
+  type          TransactionType
+  amount        Decimal         @db.Decimal(12, 2)
+  categoryId    String?
+  description   String?
+  date          DateTime
+  paymentMethod String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category FinanceCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@index([userId, date])
+}
+
+model Budget {
+  id         String  @id @default(cuid())
+  userId     String
+  categoryId String?
+  amount     Decimal @db.Decimal(12, 2)
+  month      Int
+  year       Int
+
+  @@unique([userId, categoryId, month, year])
+  @@index([userId, year, month])
+
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category FinanceCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+}
+
+model Project {
+  id              String  @id @default(cuid())
+  userId          String
+  title           String
+  slug            String  @unique
+  description     String?
+  longDescription String? @db.Text
+  image           String?
+  liveUrl         String?
+  githubUrl       String?
+  featured        Boolean @default(false)
+  published       Boolean @default(true)
+  sortOrder       Int     @default(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Skill {
+  id        String  @id @default(cuid())
+  userId    String
+  name      String
+  category  String?
+  sortOrder Int     @default(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Experience {
+  id          String    @id @default(cuid())
+  userId      String
+  company     String
+  role        String
+  description String?   @db.Text
+  startDate   DateTime
+  endDate     DateTime?
+  isCurrent   Boolean   @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Education {
+  id          String    @id @default(cuid())
+  userId      String
+  institution String
+  degree      String
+  description String?   @db.Text
+  startDate   DateTime?
+  endDate     DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Achievement {
+  id          String    @id @default(cuid())
+  userId      String
+  title       String
+  description String?   @db.Text
+  date        DateTime?
+  url         String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
