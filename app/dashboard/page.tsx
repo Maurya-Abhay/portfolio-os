@@ -1,79 +1,178 @@
 import Link from 'next/link';
 import { requireUser } from '@/lib/auth/session';
 import { prisma } from '@/lib/db/prisma';
-import { ArrowRight, BookOpen, BriefcaseBusiness, WalletCards } from 'lucide-react';
+import {
+  ArrowUpRight,
+  BookOpen,
+  BriefcaseBusiness,
+  WalletCards,
+} from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Dashboard() {
   const user = await requireUser();
-  const projects = await prisma.project.count({ where: { userId: user.id } });
+
+  const [projects, skills, experience, education] = await Promise.all([
+    prisma.project.count({
+      where: { userId: user.id },
+    }),
+    prisma.skill.count({
+      where: { userId: user.id },
+    }),
+    prisma.experience.count({
+      where: { userId: user.id },
+    }),
+    prisma.education.count({
+      where: { userId: user.id },
+    }),
+  ]);
+
+  const sections = [
+    {
+      href: '/dashboard/portfolio',
+      label: 'Portfolio',
+      description:
+        'Manage projects, skills, experience, education and achievements.',
+      icon: BriefcaseBusiness,
+      meta: `${projects} ${projects === 1 ? 'project' : 'projects'}`,
+    },
+    {
+      href: '/dashboard/study',
+      label: 'Study',
+      description:
+        'Continue learning through tracks, topics, notes and tests.',
+      icon: BookOpen,
+      meta: 'Learning workspace',
+    },
+    {
+      href: '/dashboard/finance',
+      label: 'Finance',
+      description:
+        'Track income, expenses, budgets and your financial activity.',
+      icon: WalletCards,
+      meta: 'Finance workspace',
+    },
+  ];
 
   return (
-    <div className="mx-auto">
-      <section className="rounded border border-slate-200/80 bg-white/80 p-5 shadow-[0_12px_34px_rgba(15,23,42,0.05)] backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/80 md:p-6">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">Private workspace</p>
-        <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100 md:text-3xl">
-          Welcome{user.name ? `, ${user.name}` : ''}.
-        </h2>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400">
-          Your private workspace for portfolio management and study. Track income, expenses, budgets and your current balance.
+    <div className="mx-auto max-w-7xl">
+      {/* Header */}
+      <div className="border-b border-slate-200 pb-6 dark:border-slate-800">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-cyan-600 dark:text-cyan-400">
+          Dashboard
         </p>
+
+        <h1 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-slate-900 dark:text-white sm:text-3xl">
+          Welcome{user.name ? `, ${user.name}` : ''}.
+        </h1>
+
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400">
+          Your workspace for managing the portfolio, studying, and keeping
+          track of your finances.
+        </p>
+      </div>
+
+      {/* Workspace */}
+      <section className="py-6">
+        <div className="mb-4">
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-white">
+            Workspace
+          </h2>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            Choose an area to continue.
+          </p>
+        </div>
+
+        <div className="divide-y divide-slate-200 border-y border-slate-200 dark:divide-slate-800 dark:border-slate-800">
+          {sections.map((section) => {
+            const Icon = section.icon;
+
+            return (
+              <Link
+                key={section.href}
+                href={section.href}
+                className="group flex flex-col gap-4 py-5 transition-colors sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="flex min-w-0 items-start gap-4">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-slate-200 text-slate-500 transition-colors group-hover:border-cyan-500/40 group-hover:text-cyan-600 dark:border-slate-800 dark:text-slate-400 dark:group-hover:border-cyan-400/40 dark:group-hover:text-cyan-400">
+                    <Icon className="h-4 w-4" />
+                  </div>
+
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                      <h3 className="text-sm font-semibold text-slate-900 transition-colors group-hover:text-cyan-600 dark:text-white dark:group-hover:text-cyan-400">
+                        {section.label}
+                      </h3>
+
+                      <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500">
+                        {section.meta}
+                      </span>
+                    </div>
+
+                    <p className="mt-1 max-w-2xl text-xs leading-5 text-slate-500 dark:text-slate-400">
+                      {section.description}
+                    </p>
+                  </div>
+                </div>
+
+                <ArrowUpRight className="h-4 w-4 shrink-0 text-slate-400 transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-cyan-500" />
+              </Link>
+            );
+          })}
+        </div>
       </section>
 
-      <div className="mt-4 grid gap-3 md:grid-cols-3">
-        <Link
-          href="/dashboard/portfolio"
-          className="group rounded border border-slate-200/80 bg-white/80 p-4 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(37,99,235,0.08)] dark:border-slate-800 dark:bg-slate-900/80"
-        >
-          <div className="flex size-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-300">
-            <BriefcaseBusiness className="size-4" />
-          </div>
-          <h3 className="mt-4 text-lg font-black text-slate-900 dark:text-slate-100">Portfolio</h3>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Manage published projects.</p>
-          <div className="mt-4 flex items-end justify-between">
-            <div>
-              <p className="text-2xl font-black text-slate-900 dark:text-white">{projects}</p>
-              <p className="text-[11px] uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400">Projects</p>
-            </div>
-            <ArrowRight className="size-4 text-slate-400 transition group-hover:translate-x-1 group-hover:text-blue-600" />
-          </div>
-        </Link>
+      {/* Portfolio snapshot */}
+      <section className="border-t border-slate-200 py-6 dark:border-slate-800">
+        <div className="mb-4">
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-white">
+            Portfolio snapshot
+          </h2>
 
-        <Link
-          href="/dashboard/study"
-          className="group rounded border border-slate-200/80 bg-white/80 p-4 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(15,23,42,0.08)] dark:border-slate-800 dark:bg-slate-900/80"
-        >
-          <div className="flex size-9 items-center justify-center rounded-lg bg-violet-50 text-violet-600 dark:bg-violet-500/10 dark:text-violet-300">
-            <BookOpen className="size-4" />
-          </div>
-          <h3 className="mt-4 text-lg font-black text-slate-900 dark:text-slate-100">Study</h3>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Tracks, topics, notes and progress.</p>
-          <div className="mt-5 flex items-end justify-between">
-            <div>
-              <p className="text-base font-black text-slate-900 dark:text-white">Built-in flow</p>
-            </div>
-            <ArrowRight className="size-4 text-slate-400 transition group-hover:translate-x-1 group-hover:text-violet-600" />
-          </div>
-        </Link>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            Current content in your portfolio.
+          </p>
+        </div>
 
-        <Link
-          href="/dashboard/finance"
-          className="group rounded border border-slate-200/80 bg-white/80 p-4 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(15,23,42,0.08)] dark:border-slate-800 dark:bg-slate-900/80"
-        >
-          <div className="flex size-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-300">
-            <WalletCards className="size-4" />
+        <div className="grid grid-cols-2 divide-x divide-y divide-slate-200 border border-slate-200 dark:divide-slate-800 dark:border-slate-800 sm:grid-cols-4 sm:divide-y-0">
+          <div className="p-4">
+            <p className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">
+              {projects}
+            </p>
+            <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+              Projects
+            </p>
           </div>
-          <h3 className="mt-4 text-lg font-black text-slate-900 dark:text-slate-100">Finance</h3>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Income, expenses, budgets and analytics.</p>
-          <div className="mt-5 flex items-end justify-between">
-            <div>
-              <p className="text-base font-black text-slate-900 dark:text-white">Healthy overview</p>
-            </div>
-            <ArrowRight className="size-4 text-slate-400 transition group-hover:translate-x-1 group-hover:text-emerald-600" />
+
+          <div className="p-4">
+            <p className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">
+              {skills}
+            </p>
+            <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+              Skills
+            </p>
           </div>
-        </Link>
-      </div>
+
+          <div className="p-4">
+            <p className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">
+              {experience}
+            </p>
+            <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+              Experience
+            </p>
+          </div>
+
+          <div className="p-4">
+            <p className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">
+              {education}
+            </p>
+            <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+              Education
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

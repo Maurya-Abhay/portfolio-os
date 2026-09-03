@@ -8,35 +8,101 @@ interface ProjectCardProps {
   slug: string;
 }
 
-export function ProjectCard({ title, description, tags, slug }: ProjectCardProps) {
+export function ProjectCard({
+  title,
+  description,
+  tags,
+  slug,
+}: ProjectCardProps) {
   return (
     <Link
       href={`/projects/${slug}`}
-      className="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-slate-800/80 bg-slate-900/40 p-4 transition-all duration-200 hover:border-slate-700 hover:bg-slate-900"
+      className="
+        group block h-full
+        focus:outline-none
+        focus-visible:ring-2
+        focus-visible:ring-cyan-400/50
+        focus-visible:ring-offset-2
+        focus-visible:ring-offset-[#080b11]
+      "
     >
-      <div>
-        <div className="mb-4 flex items-center justify-between">
-          <span className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-2 py-1 text-[10px] font-semibold text-cyan-400">
-            Featured project
-          </span>
-          <div className="rounded-full border border-slate-800 bg-slate-950/50 p-1.5 text-slate-400 group-hover:text-cyan-400">
-            <ArrowUpRight className="h-4 w-4" />
+      <div className="flex h-full flex-col">
+        {/* Project heading */}
+        <div className="flex items-start justify-between gap-5">
+          <div className="min-w-0">
+            <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.18em] text-slate-500">
+              Project
+            </p>
+
+            <h3
+              className="
+                break-words text-xl font-semibold tracking-[-0.02em]
+                text-white transition-colors duration-200
+                group-hover:text-cyan-300
+              "
+            >
+              {title}
+            </h3>
           </div>
+
+          <span
+            className="
+              mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center
+              rounded-full border border-slate-800
+              text-slate-500 transition-all duration-200
+              group-hover:border-cyan-400/40
+              group-hover:bg-cyan-400/5
+              group-hover:text-cyan-300
+            "
+            aria-hidden="true"
+          >
+            <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </span>
         </div>
 
-        <h3 className="break-words text-lg font-bold text-white group-hover:text-cyan-400">{title}</h3>
-        <p className="mt-2 break-words text-sm leading-6 text-slate-400">{description}</p>
+        {/* Description */}
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-400">
+          {description}
+        </p>
+
+        {/* Technologies */}
+        {tags.length > 0 && (
+          <div className="mt-7 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-slate-800/80 pt-4">
+            {tags.map((tag) => (
+              <span
+                key={tag}
+                className="
+                  text-[11px] font-medium tracking-wide
+                  text-slate-500 transition-colors duration-200
+                  group-hover:text-slate-400
+                "
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Bottom action */}
+        <div className="mt-auto pt-6">
+          <span
+            className="
+              inline-flex items-center gap-2 text-sm font-medium
+              text-slate-300 transition-colors duration-200
+              group-hover:text-white
+            "
+          >
+            View project
+            <ArrowUpRight
+              className="
+                h-4 w-4 transition-transform duration-200
+                group-hover:-translate-y-0.5
+                group-hover:translate-x-0.5
+              "
+            />
+          </span>
+        </div>
       </div>
-
-      {tags.length > 0 && (
-        <div className="mt-5 flex flex-wrap gap-2">
-          {tags.map((t) => (
-            <span key={t} className="rounded-md border border-slate-800/60 bg-slate-950/60 px-2 py-1 text-[10px] font-medium text-slate-300">
-              {t}
-            </span>
-          ))}
-        </div>
-      )}
     </Link>
   );
 }

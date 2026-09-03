@@ -2,9 +2,31 @@
 
 import { useEffect, useState } from 'react';
 
-type Target = { id: string; title: string; type: string; dueDate: string | null; status: 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED' };
+type Target = {
+  id: string;
+  title: string;
+  type: string;
+  dueDate: string | null;
+  status:
+    | 'NOT_STARTED'
+    | 'IN_PROGRESS'
+    | 'COMPLETED';
+};
 
-const button = 'rounded-md px-2 py-1 text-xs font-bold transition hover:bg-slate-200 dark:hover:bg-slate-700';
+const formatDate = (value: string | null) => {
+  if (!value) return 'No due date';
+
+  return new Date(value).toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+};
+
+const statusLabel = (status: Target['status']) =>
+  status
+    .replaceAll('_', ' ')
+    .toLowerCase();
 
 export function TargetManager() {
   const [rows, setRows] = useState<Target[]>([]);
@@ -12,44 +34,297 @@ export function TargetManager() {
   const [due, setDue] = useState('');
   const [busy, setBusy] = useState(false);
   const [editing, setEditing] = useState<string | null>(null);
+  const [error, setError] = useState('');
 
-  useEffect(() => { fetch('/api/study/targets').then((r) => r.json()).then((value) => Array.isArray(value) && setRows(value)); }, []);
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch('/api/study/targets', {
+      cache: 'no-store',
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error();
+        }
+
+        return response.json();
+      })
+      .then((value) => {
+        if (!cancelled && Array.isArray(value)) {
+          setRows(value);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setError('Could not load study targets.');
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  function resetForm() {
+    setEditing(null);
+    setTitle('');
+    setDue('');
+  }
 
   async function save() {
     if (!title.trim()) return;
+
     setBusy(true);
-    const body = { title, type: 'STUDY', dueDate: due ? new Date(`${due}T12:00:00`).toISOString() : null, status: 'NOT_STARTED' };
-    const response = await fetch(`/api/study/targets${editing ? `?id=${editing}` : ''}`, { method: editing ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(editing ? { ...body, id: editing } : body) });
-    if (response.ok) {
+    setError('');
+
+    const body = {
+      title: title.trim(),
+      type: 'STUDY',
+      dueDate: due
+        ? new Date(`${due}T12:00:00`).toISOString()
+        : null,
+      status: 'NOT_STARTED',
+    };
+
+    try {
+      const response = await fetch(
+        `/api/study/targets${editing ? `?id=${editing}` : ''}`,
+        {
+          method: editing ? 'PUT' : 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(
+            editing
+              ? {
+                  ...body,
+                  id: editing,
+                }
+              : body,
+          ),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error();
+      }
+
       const value = await response.json();
-      setRows(editing ? rows.map((target) => target.id === editing ? value : target) : [value, ...rows]);
-      setEditing(null); setTitle(''); setDue('');
+
+      setRows((current) =>
+        editing
+          ? current.map((target) =>
+              target.id === editing ? value : target,
+            )
+          : [value, ...current],
+      );
+
+      resetForm();
+    } catch {
+      setError(
+        editing
+          ? 'Could not update this target.'
+          : 'Could not add this target.',
+      );
+    } finally {
+      setBusy(false);
     }
-    setBusy(false);
   }
 
   async function toggle(target: Target) {
-    const status = target.status === 'COMPLETED' ? 'IN_PROGRESS' : 'COMPLETED';
-    const response = await fetch('/api/study/targets', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: target.id, title: target.title, type: target.type, dueDate: target.dueDate, status }) });
-    if (response.ok) { const value = await response.json(); setRows(rows.map((item) => item.id === target.id ? value : item)); }
+    const status =
+      target.status === 'COMPLETED'
+        ? 'IN_PROGRESS'
+        : 'COMPLETED';
+
+    try {
+      const response = await fetch('/api/study/targets', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: target.id,
+          title: target.title,
+          type: target.type,
+          dueDate: target.dueDate,
+          status,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error();
+      }
+
+      const value = await response.json();
+
+      setRows((current) =>
+        current.map((item) =>
+          item.id === target.id ? value : item,
+        ),
+      );
+    } catch {
+      setError('Could not update this target.');
+    }
   }
 
   async function remove(id: string) {
     if (!confirm('Delete this target?')) return;
-    const response = await fetch(`/api/study/targets?id=${id}`, { method: 'DELETE' });
-    if (response.ok) setRows(rows.filter((target) => target.id !== id));
+
+    try {
+      const response = await fetch(
+        `/api/study/targets?id=${id}`,
+        {
+          method: 'DELETE',
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error();
+      }
+
+      setRows((current) =>
+        current.filter((target) => target.id !== id),
+      );
+
+      if (editing === id) {
+        resetForm();
+      }
+    } catch {
+      setError('Could not delete this target.');
+    }
   }
 
-  function edit(target: Target) { setEditing(target.id); setTitle(target.title); setDue(target.dueDate ? new Date(target.dueDate).toISOString().slice(0, 10) : ''); }
+  function edit(target: Target) {
+    setEditing(target.id);
+    setTitle(target.title);
 
-  return <div className="rounded-xl border border-slate-200 bg-white/80 p-4 dark:border-slate-800 dark:bg-slate-900/80">
-    <div className="flex items-center justify-between"><div className="font-black text-slate-900 dark:text-white">Study targets</div><span className="text-xs text-slate-500 dark:text-slate-400">{rows.length} total</span></div>
-    <div className="mt-3 grid gap-2 md:grid-cols-[1fr_160px_auto]">
-      <input className="h-10 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-400 dark:border-slate-700 dark:bg-slate-950 dark:text-white" placeholder="Finish JavaScript fundamentals" value={title} onChange={(e) => setTitle(e.target.value)} />
-      <input className="h-10 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none focus:border-blue-400 dark:border-slate-700 dark:bg-slate-950 dark:text-white" type="date" value={due} onChange={(e) => setDue(e.target.value)} />
-      <button onClick={save} disabled={busy || !title.trim()} className="h-10 rounded-lg bg-slate-950 px-4 text-xs font-bold text-white disabled:opacity-50 dark:bg-white dark:text-slate-950">{editing ? 'Save target' : 'Add target'}</button>
+    setDue(
+      target.dueDate
+        ? new Date(target.dueDate)
+            .toISOString()
+            .slice(0, 10)
+        : '',
+    );
+
+    setError('');
+  }
+
+  return (
+    <div className="border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950">
+      <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3 dark:border-slate-800">
+        <div>
+          <p className="text-sm font-semibold text-slate-900 dark:text-white">
+            Study targets
+          </p>
+
+          <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+            {rows.length} target{rows.length === 1 ? '' : 's'}
+          </p>
+        </div>
+      </div>
+
+      <div className="p-4">
+        {error && (
+          <p className="mb-3 text-xs font-medium text-red-600 dark:text-red-400">
+            {error}
+          </p>
+        )}
+
+        <div className="grid gap-2 md:grid-cols-[minmax(0,1fr)_160px_auto]">
+          <input
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            placeholder="Finish JavaScript fundamentals"
+            className="h-10 min-w-0 border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-cyan-500 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-cyan-400"
+          />
+
+          <input
+            type="date"
+            value={due}
+            onChange={(event) => setDue(event.target.value)}
+            className="h-10 border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition-colors focus:border-cyan-500 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-cyan-400"
+          />
+
+          <button
+            type="button"
+            onClick={save}
+            disabled={busy || !title.trim()}
+            className="h-10 rounded-md bg-slate-900 px-4 text-xs font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200"
+          >
+            {busy
+              ? 'Saving…'
+              : editing
+                ? 'Save target'
+                : 'Add target'}
+          </button>
+        </div>
+
+        {editing && (
+          <button
+            type="button"
+            onClick={resetForm}
+            className="mt-2 text-xs font-medium text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+          >
+            Cancel edit
+          </button>
+        )}
+
+        <div className="mt-5 divide-y divide-slate-200 border-y border-slate-200 dark:divide-slate-800 dark:border-slate-800">
+          {rows.length > 0 ? (
+            rows.map((target) => (
+              <div
+                key={target.id}
+                className="flex flex-col gap-3 py-3.5 sm:flex-row sm:items-center"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-slate-900 dark:text-white">
+                    {target.title}
+                  </p>
+
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    {formatDate(target.dueDate)}
+                    {' · '}
+                    {statusLabel(target.status)}
+                  </p>
+                </div>
+
+                <div className="flex shrink-0 items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => toggle(target)}
+                    className="text-xs font-medium text-cyan-600 transition-colors hover:text-cyan-500 dark:text-cyan-400"
+                  >
+                    {target.status === 'COMPLETED'
+                      ? 'Reopen'
+                      : 'Complete'}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => edit(target)}
+                    className="text-xs font-medium text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => remove(target.id)}
+                    className="text-xs font-medium text-slate-500 transition-colors hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="py-4 text-sm text-slate-500 dark:text-slate-400">
+              No targets yet.
+            </p>
+          )}
+        </div>
+      </div>
     </div>
-    {editing && <button onClick={() => { setEditing(null); setTitle(''); setDue(''); }} className="mt-2 text-xs font-bold text-blue-600 dark:text-blue-300">Cancel edit</button>}
-    <div className="mt-4 space-y-2">{rows.length ? rows.map((target) => <div key={target.id} className="flex flex-wrap items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-950/60"><div className="min-w-0 flex-1"><div className="truncate text-sm font-bold text-slate-900 dark:text-white">{target.title}</div><div className="text-xs text-slate-500 dark:text-slate-400">{target.dueDate ? new Date(target.dueDate).toLocaleDateString() : 'No due date'} · {target.status.replace('_', ' ').toLowerCase()}</div></div><button onClick={() => toggle(target)} className={`${button} text-blue-600 dark:text-blue-300`}>{target.status === 'COMPLETED' ? 'Reopen' : 'Complete'}</button><button onClick={() => edit(target)} className={`${button} text-slate-600 dark:text-slate-300`}>Edit</button><button onClick={() => remove(target.id)} className={`${button} text-red-600 dark:text-red-300`}>Delete</button></div>) : <p className="py-3 text-sm text-slate-500 dark:text-slate-400">No targets yet.</p>}</div>
-  </div>;
+  );
 }

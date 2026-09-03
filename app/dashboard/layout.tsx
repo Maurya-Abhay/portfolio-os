@@ -3,7 +3,11 @@ import { DashboardHeader } from '@/components/layout/dashboard-header';
 import { getCurrentUser } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 
-export default async function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -11,22 +15,21 @@ export default async function Layout({ children }: { children: React.ReactNode }
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(96,165,250,0.10),transparent_35%),#f8fafc] transition-colors duration-300 dark:bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.10),transparent_35%),#020817] lg:flex">
-      {/* Fixed Sidebar */}
+    <div className="h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
       <Sidebar />
 
-      {/* Main Content Wrapper */}
-      <main className="flex min-w-0 flex-1 flex-col">
-        <DashboardHeader 
-          title="Portfolio OS" 
-          description={`Private workspace${user.name ? ` · ${user.name}` : ''}`} 
+      <div className="h-full lg:pl-56">
+        <DashboardHeader
+          title="Portfolio OS"
+          description={`Private workspace${user.name ? ` · ${user.name}` : ''}`}
         />
-        
-        {/* Padding for pages */}
-        <div className="flex-1 p-4">
-          {children}
-        </div>
-      </main>
+
+        <main className="h-full overflow-y-auto pt-14">
+          <div className="min-h-[calc(100vh-3.5rem)] px-4 py-6 sm:px-6 lg:px-8">
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

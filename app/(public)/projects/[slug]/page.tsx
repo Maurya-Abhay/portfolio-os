@@ -2,218 +2,259 @@ import { getPublishedProject } from '@/lib/portfolio-owner';
 import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/portfolio/footer';
 import Link from 'next/link';
-import { ArrowUpRight, Github, ArrowLeft, Terminal, CheckCircle2, Cpu, Code2, Zap } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  Github,
+  Code2,
+} from 'lucide-react';
 import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
-export default async function Project({ params }: { params: Promise<{ slug: string }> }) {
+export default async function Project({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
+
   const p = await getPublishedProject(slug).catch(() => null);
 
   if (!p) notFound();
 
   return (
-    <div className="min-h-screen bg-[#0a0e17] text-slate-100 selection:bg-cyan-500 selection:text-slate-950 font-sans overflow-hidden">
-      
-      {/* Premium Background Effects */}
-      <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-cyan-500/15 via-blue-500/5 to-transparent blur-[140px] rounded-full" />
-        <div className="absolute bottom-0 left-1/3 w-[500px] h-[500px] bg-gradient-to-tr from-indigo-500/10 to-transparent blur-[140px] rounded-full" />
+    <div className="min-h-screen overflow-x-hidden bg-[#080b11] text-slate-100 antialiased selection:bg-cyan-400/20 selection:text-cyan-100">
+      {/* Subtle background */}
+      <div className="pointer-events-none fixed inset-0 -z-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_5%,rgba(34,211,238,0.035),transparent_25%),radial-gradient(circle_at_85%_20%,rgba(59,130,246,0.025),transparent_25%)]" />
+
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(148,163,184,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem]" />
       </div>
 
       <Navbar />
-      
-      <main className="relative pt-20 mx-auto max-w-7xl px-6 py-12 md:py-16">
-        
-        {/* Back Navigation Button */}
-        <Link 
-          href="/#work" 
-          className="group inline-flex items-center gap-2.5 rounded-lg border border-slate-700/60 bg-slate-900/40 px-4 py-2 text-xs font-semibold text-slate-300 transition-all duration-300 hover:border-cyan-500/40 hover:bg-slate-800/60 hover:text-cyan-300 hover:shadow-lg hover:shadow-cyan-500/10 backdrop-blur-sm"
-        >
-          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> 
-          <span>Back to Portfolio</span>
-        </Link>
 
-        {/* Hero Section with Project Title */}
-        <div className="mt-12 space-y-6 border-b border-slate-700/50 pb-12">
-          
+      <main>
+        {/* =========================================================
+            PROJECT HEADER
+        ========================================================== */}
+        <section className="mx-auto max-w-7xl px-6 pb-12 pt-10 sm:pb-14 sm:pt-12 lg:px-8 lg:pb-16 lg:pt-10">
+          <Link
+            href="/#work"
+            className="group inline-flex items-center gap-2 text-xs font-medium text-slate-500 transition-colors hover:text-white"
+          >
+            <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
+            Back to work
+          </Link>
 
-          {/* Title with Gradient */}
-          <div className="space-y-4">
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.1]">
+          <div className="mt-8 max-w-4xl">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-400">
+              Project
+            </p>
+
+            <h1 className="mt-3 text-3xl font-semibold leading-[1.08] tracking-[-0.04em] text-white sm:text-3xl lg:text-4xl">
               {p.title}
             </h1>
-            <p className="text-lg sm:text-xl text-slate-300 leading-relaxed font-light max-w-3xl">
+
+            <p className="mt-5 max-w-3xl text-base leading-8 text-slate-400 sm:text-lg">
               {p.description}
             </p>
-          </div>
-        </div>
 
-        {/* Main Content Grid - Bento Style */}
-        <div className="mt-12 grid gap-8 lg:grid-cols-12 items-start">
-          
-          {/* Main Description Section - Left */}
-          <div className="lg:col-span-8 space-y-8">
-            
-            {/* System Overview Card - Premium */}
-            <div className="group relative">
-              {/* Glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-indigo-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-              
-              {/* Card */}
-              <div className="relative rounded-2xl border border-slate-700/60 bg-gradient-to-b from-slate-900/60 to-slate-950/80 p-8 md:p-10 backdrop-blur-xl transition-all duration-300 group-hover:border-cyan-500/40 group-hover:shadow-2xl group-hover:shadow-cyan-500/10">
-                
-                {/* Header */}
-                <div className="flex items-center gap-3 mb-8 pb-6 border-b border-slate-700/50">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500/20 to-cyan-500/5 text-cyan-400">
-                    <Terminal className="h-5 w-5" />
+            <div className="mt-7 flex flex-wrap items-center gap-3">
+              {p.liveUrl && (
+                <a
+                  href={p.liveUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group inline-flex h-11 items-center gap-2 rounded-lg bg-cyan-400 px-5 text-sm font-semibold text-slate-950 transition-colors hover:bg-cyan-300"
+                >
+                  Open live project
+                  <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </a>
+              )}
+
+              {p.githubUrl && (
+                <a
+                  href={p.githubUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex h-11 items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/40 px-5 text-sm font-medium text-slate-300 transition-colors hover:border-slate-700 hover:bg-slate-900 hover:text-white"
+                >
+                  <Github className="h-4 w-4" />
+                  Source code
+                </a>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* =========================================================
+            PROJECT CONTENT
+        ========================================================== */}
+        <section className="border-t border-slate-800/80">
+          <div className="mx-auto max-w-7xl px-6 py-12 sm:py-14 lg:px-8 lg:py-16">
+            <div className="grid gap-10 lg:grid-cols-[1fr_320px] lg:gap-16">
+              {/* Main content */}
+              <article className="min-w-0">
+                <div>
+                  <div className="flex items-center gap-2.5">
+                    <Code2 className="h-4 w-4 text-cyan-400" />
+
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                      Overview
+                    </p>
                   </div>
+
+                  <div className="mt-6 max-w-3xl">
+                    <p className="whitespace-pre-wrap text-[15px] leading-8 text-slate-300 sm:text-base">
+                      {p.longDescription ||
+                        p.description ||
+                        'No detailed project overview has been added yet.'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Project details */}
+                <div className="mt-12 border-t border-slate-800 pt-8">
+                  <div className="grid gap-8 sm:grid-cols-2">
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-600">
+                        What I built
+                      </p>
+
+                      <p className="mt-2 text-sm leading-6 text-slate-400">
+                        A complete product experience spanning interface,
+                        application logic, and supporting backend systems.
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-600">
+                        Engineering focus
+                      </p>
+
+                      <p className="mt-2 text-sm leading-6 text-slate-400">
+                        Clear architecture, practical APIs, maintainable code,
+                        and an experience that works well across screen sizes.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              {/* Sidebar */}
+              <aside className="lg:border-l lg:border-slate-800 lg:pl-8">
+                <div className="lg:sticky lg:top-24">
+                  {/* Links */}
                   <div>
-                    <h2 className="text-xs font-bold uppercase tracking-widest text-cyan-300">System Overview</h2>
-                    <p className="text-xs text-slate-500 font-mono mt-1">Implementation Details</p>
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-600">
+                      Project links
+                    </p>
+
+                    <div className="mt-4 space-y-2">
+                      {p.liveUrl && (
+                        <a
+                          href={p.liveUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="group flex items-center justify-between rounded-lg border border-slate-800 bg-slate-900/30 px-4 py-3 text-sm font-medium text-slate-300 transition-colors hover:border-slate-700 hover:bg-slate-900/60 hover:text-white"
+                        >
+                          <span>Live application</span>
+
+                          <ArrowUpRight className="h-4 w-4 text-slate-600 transition-colors group-hover:text-cyan-300" />
+                        </a>
+                      )}
+
+                      {p.githubUrl && (
+                        <a
+                          href={p.githubUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="group flex items-center justify-between rounded-lg border border-slate-800 bg-slate-900/30 px-4 py-3 text-sm font-medium text-slate-300 transition-colors hover:border-slate-700 hover:bg-slate-900/60 hover:text-white"
+                        >
+                          <span>Source code</span>
+
+                          <Github className="h-4 w-4 text-slate-600 transition-colors group-hover:text-cyan-300" />
+                        </a>
+                      )}
+                    </div>
                   </div>
-                </div>
-                
-                {/* Content */}
-                <div className="prose prose-invert max-w-none space-y-4">
-                  <p className="text-base leading-relaxed text-slate-300 font-light whitespace-pre-wrap">
-                    {p.longDescription || p.description || 'No detailed technical documentation provided for this project yet.'}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
 
-          {/* Sidebar - Right */}
-          <div className="lg:col-span-4 space-y-6">
-            
-            {/* Project Links Card - Premium */}
-            <div className="group relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/15 to-transparent rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-              
-              <div className="relative rounded-2xl border border-slate-700/60 bg-gradient-to-b from-slate-900/60 to-slate-950/80 p-6 backdrop-blur-xl">
-                
-                <h3 className="text-xs font-bold uppercase tracking-widest text-slate-300 font-mono flex items-center gap-2 mb-5">
-                  <Code2 className="h-4 w-4 text-cyan-400" />
-                  Project Links
-                </h3>
-                
-                <div className="space-y-3">
-                  {p.liveUrl && (
-                    <a 
-                      href={p.liveUrl} 
-                      target="_blank" 
-                      rel="noreferrer" 
-                      className="group/btn flex items-center justify-between rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-600 px-4 py-3 text-sm font-bold text-slate-950 shadow-lg shadow-cyan-500/30 transition-all duration-300 hover:shadow-cyan-500/50 hover:scale-105 active:scale-100"
-                    >
-                      <span>Live Application</span>
-                      <ArrowUpRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1" />
-                    </a>
-                  )}
+                  {/* Technical summary */}
+                  <div className="mt-8 border-t border-slate-800 pt-7">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-600">
+                      Technical focus
+                    </p>
 
-                  {p.githubUrl && (
-                    <a 
-                      href={p.githubUrl} 
-                      target="_blank" 
-                      rel="noreferrer" 
-                      className="group/btn flex items-center justify-between rounded-lg border border-slate-700/60 bg-slate-900/40 px-4 py-3 text-sm font-semibold text-slate-200 transition-all duration-300 hover:border-cyan-500/40 hover:bg-slate-800/60 hover:text-cyan-300 hover:shadow-lg hover:shadow-cyan-500/10 backdrop-blur-sm"
-                    >
-                      <span>Source Code</span>
-                      <Github className="h-4 w-4 transition-transform group-hover/btn:scale-110" />
-                    </a>
-                  )}
-                </div>
-              </div>
-            </div>
+                    <div className="mt-4 space-y-3">
+                      <div className="flex items-start justify-between gap-4">
+                        <span className="text-sm text-slate-400">
+                          Frontend
+                        </span>
 
-            {/* Tech Stack Card - Premium */}
-            <div className="group relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/15 to-transparent rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-              
-              <div className="relative rounded-2xl border border-slate-700/60 bg-gradient-to-b from-slate-900/60 to-slate-950/80 p-6 backdrop-blur-xl">
-                
-                <h3 className="text-xs font-bold uppercase tracking-widest text-slate-300 font-mono flex items-center gap-2 mb-5">
-                  <Cpu className="h-4 w-4 text-cyan-400" />
-                  Tech Stack & Features
-                </h3>
-                
-                <ul className="space-y-3">
-                  {[
-                    'Responsive & Modern UI',
-                    'Optimized Database',
-                    'Clean API Design',
-                    'Scalable Architecture',
-                    'Performance Tuned',
-                    'Production Ready'
-                  ].map((feature, i) => (
-                    <li 
-                      key={i}
-                      className="group/feature flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-cyan-500/10 to-transparent border border-slate-700/40 transition-all duration-300 hover:border-cyan-500/40 hover:from-cyan-500/15"
-                    >
-                      <CheckCircle2 className="h-4 w-4 text-cyan-400 shrink-0 transition-transform group-hover/feature:scale-110" />
-                      <span className="text-sm font-medium text-slate-300 group-hover/feature:text-cyan-300 transition-colors">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            {/* Performance Metrics Card - Premium */}
-            <div className="group relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/15 to-transparent rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-              
-              <div className="relative rounded-2xl border border-slate-700/60 bg-gradient-to-b from-slate-900/60 to-slate-950/80 p-6 backdrop-blur-xl">
-                
-                <h3 className="text-xs font-bold uppercase tracking-widest text-slate-300 font-mono flex items-center gap-2 mb-5">
-                  <Zap className="h-4 w-4 text-emerald-400" />
-                  Performance
-                </h3>
-                
-                <div className="space-y-4">
-                  {[
-                    { label: 'Page Speed', value: '98/100' },
-                    { label: 'Best Practices', value: '95/100' },
-                    { label: 'Accessibility', value: '92/100' },
-                  ].map((metric, i) => (
-                    <div key={i} className="space-y-2">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="font-semibold text-slate-300">{metric.label}</span>
-                        <span className="font-bold text-emerald-400">{metric.value}</span>
+                        <span className="text-right text-sm font-medium text-slate-300">
+                          React / Next.js
+                        </span>
                       </div>
-                      <div className="h-2 rounded-full bg-slate-800/50 overflow-hidden">
-                        <div 
-                          className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full"
-                          style={{ width: `${parseInt(metric.value) / 100 * 100}%` }}
-                        />
+
+                      <div className="flex items-start justify-between gap-4">
+                        <span className="text-sm text-slate-400">
+                          Backend
+                        </span>
+
+                        <span className="text-right text-sm font-medium text-slate-300">
+                          APIs / Node.js
+                        </span>
+                      </div>
+
+                      <div className="flex items-start justify-between gap-4">
+                        <span className="text-sm text-slate-400">
+                          Data
+                        </span>
+
+                        <span className="text-right text-sm font-medium text-slate-300">
+                          Database / ORM
+                        </span>
                       </div>
                     </div>
-                  ))}
+                  </div>
                 </div>
-              </div>
+              </aside>
             </div>
-
           </div>
+        </section>
 
-        </div>
+        {/* =========================================================
+            NEXT STEP
+        ========================================================== */}
+        <section className="border-t border-slate-800/80">
+          <div className="mx-auto max-w-7xl px-6 py-14 sm:py-16 lg:px-8">
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-400">
+                  Next step
+                </p>
 
-        {/* CTA Section */}
-        <div className="mt-20 rounded-2xl border border-slate-700/50 bg-gradient-to-r from-slate-900/40 to-slate-950/60 p-8 md:p-12 backdrop-blur-xl text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">
-            Interested in this project?
-          </h2>
-          <p className="text-slate-300 mb-6 max-w-xl mx-auto">
-            Let's discuss how I can help build something amazing for your next project.
-          </p>
-          <Link
-            href="/#contact"
-            className="group inline-flex items-center gap-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-600 px-6 py-3 text-sm font-bold text-slate-950 shadow-lg shadow-cyan-500/30 transition-all duration-300 hover:shadow-cyan-500/50 hover:scale-105 active:scale-100"
-          >
-            <span>Get in Touch</span>
-            <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-          </Link>
-        </div>
+                <h2 className="mt-2 text-2xl font-semibold tracking-[-0.025em] text-white">
+                  Have a similar problem to solve?
+                </h2>
 
+                <p className="mt-2 text-sm text-slate-500">
+                  Let&apos;s talk about the product, the problem, and what
+                  needs to be built.
+                </p>
+              </div>
+
+              <Link
+                href="/#contact"
+                className="group inline-flex h-11 shrink-0 items-center gap-2 rounded-lg bg-cyan-400 px-5 text-sm font-semibold text-slate-950 transition-colors hover:bg-cyan-300"
+              >
+                Start a conversation
+                <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </Link>
+            </div>
+          </div>
+        </section>
       </main>
 
       <Footer />

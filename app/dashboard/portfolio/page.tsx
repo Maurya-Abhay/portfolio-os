@@ -8,20 +8,46 @@ export default async function Portfolio() {
   await requireUser();
 
   return (
-    <div className="mx-auto">
-      <div className="mb-5">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600">Portfolio CMS</p>
-        <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900 dark:text-white md:text-3xl">Manage your public presence.</h2>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400">Create and update every public portfolio section from one organized workspace.</p>
+    <div className="mx-auto max-w-7xl">
+      <div className="border-b border-slate-200 pb-6 dark:border-slate-800">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-cyan-600 dark:text-cyan-400">
+          Portfolio
+        </p>
+
+        <h1 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-slate-900 dark:text-white sm:text-3xl">
+          Manage your public portfolio.
+        </h1>
+
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400">
+          Update your profile, projects, skills, experience, education, and
+          achievements from one workspace.
+        </p>
       </div>
 
-      <div className="space-y-4">
-        <ProfileSettings />
-        <PortfolioCrud kind="projects" />
-        <PortfolioCrud kind="skills" />
-        <PortfolioCrud kind="experience" />
-        <PortfolioCrud kind="education" />
-        <PortfolioCrud kind="achievements" />
+      <div className="divide-y divide-slate-200 dark:divide-slate-800">
+        <section className="py-6">
+          <ProfileSettings />
+        </section>
+
+        <section className="py-6">
+          <PortfolioCrud kind="projects" />
+        </section>
+
+        <section className="py-6">
+          <PortfolioCrud kind="skills" />
+        </section>
+
+        <section className="py-6">
+          <PortfolioCrud kind="experience" />
+        </section>
+
+        <section className="py-6">
+          <PortfolioCrud kind="education" />
+        </section>
+
+        <section className="py-6">
+          <PortfolioCrud kind="achievements" />
+        </section>
       </div>
     </div>
   );

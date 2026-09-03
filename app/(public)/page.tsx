@@ -1,18 +1,59 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowUpRight, Code2, Database, Github, Layout, Linkedin, Mail, Sparkles, Terminal, Twitter } from 'lucide-react';
+import {
+  ArrowUpRight,
+  Code2,
+  Database,
+  Github,
+  GraduationCap,
+  Layout,
+  Linkedin,
+  Mail,
+  Terminal,
+  Twitter,
+} from 'lucide-react';
+import type { Metadata } from 'next';
+
 import { getPortfolioOwner } from '@/lib/portfolio-owner';
 import { ProjectCard } from '@/components/portfolio/project-card';
 import { Footer } from '@/components/portfolio/footer';
 import { Navbar } from '@/components/layout/navbar';
-import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Full-Stack Developer & Software Architect',
-  description: 'Building scalable web applications, robust APIs, and intuitive user experiences.',
+  description:
+    'Full-stack developer building reliable web applications, APIs, and practical digital products.',
 };
 
 export const dynamic = 'force-dynamic';
+
+function SectionHeader({
+  eyebrow,
+  title,
+  description,
+}: {
+  eyebrow: string;
+  title: string;
+  description?: string;
+}) {
+  return (
+    <div className="max-w-2xl">
+      <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-400">
+        {eyebrow}
+      </p>
+
+      <h2 className="text-3xl font-semibold text-white sm:text-4xl">
+        {title}
+      </h2>
+
+      {description && (
+        <p className="mt-3 max-w-xl text-sm leading-7 text-slate-400 sm:text-[15px]">
+          {description}
+        </p>
+      )}
+    </div>
+  );
+}
 
 export default async function Home() {
   const owner = await getPortfolioOwner().catch(() => null);
@@ -20,467 +61,821 @@ export default async function Home() {
   const projects = owner?.projects || [];
   const skills = owner?.skills || [];
   const experiences = owner?.experiences || [];
+  const education = owner?.education || [];
 
   return (
-    <div className="relative min-h-screen bg-[#0a0e17] text-slate-100 selection:bg-cyan-500 selection:text-slate-950 font-sans antialiased overflow-hidden">
+    <div className="min-h-screen overflow-x-hidden bg-[#080b11] text-slate-100 antialiased selection:bg-cyan-400/20 selection:text-cyan-100">
+      {/* =========================================================
+          BACKGROUND
+      ========================================================== */}
+      <div className="pointer-events-none fixed inset-0 -z-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_8%,rgba(34,211,238,0.05),transparent_25%),radial-gradient(circle_at_88%_18%,rgba(59,130,246,0.035),transparent_25%)]" />
 
-      {/* Premium Animated Gradient Background */}
-      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-        {/* Top-left accent */}
-        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-gradient-to-br from-cyan-500/15 via-blue-500/5 to-transparent blur-[140px] rounded-full animate-pulse" style={{ animationDuration: '8s' }} />
-        
-        {/* Bottom-right accent */}
-        <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-gradient-to-tl from-indigo-500/10 via-purple-500/5 to-transparent blur-[140px] rounded-full animate-pulse" style={{ animationDuration: '10s', animationDelay: '2s' }} />
-        
-        {/* Center subtle glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gradient-to-r from-cyan-500/5 via-transparent to-indigo-500/5 blur-[120px] rounded-full" />
-
-        {/* Subtle grid pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b08_1px,transparent_1px),linear-gradient(to_bottom,#1e293b08_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(148,163,184,0.025)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.025)_1px,transparent_1px)] bg-[size:4rem_4rem]" />
       </div>
 
       <Navbar />
 
-      <main className="relative pt-0">
+      <main>
+        {/* =========================================================
+            1. HERO
+        ========================================================== */}
+        <section className="mx-auto max-w-7xl px-6 pb-14 pt-12 sm:pb-16 sm:pt-14 lg:px-8 lg:pb-20 lg:pt-20">
+          <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
+            {/* Left */}
+            <div className="max-w-3xl">
+              <div className="flex items-center gap-2.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
 
-        {/* Hero Section - Premium Version */}
-        <section className="relative mx-auto grid max-w-7xl items-center gap-16 px-6 pt-20 pb-24 lg:grid-cols-12 lg:pt-28">
-
-          <div className="lg:col-span-7 relative z-10 space-y-8">
-
-            {/* Status Badge - More Premium */}
-            <div className="inline-flex items-center gap-2.5 rounded-full border border-cyan-500/40 bg-gradient-to-r from-cyan-500/15 to-cyan-500/5 px-4 py-2 text-xs font-semibold text-cyan-200 backdrop-blur-xl shadow-lg shadow-cyan-500/10 hover:border-cyan-500/60 transition-all duration-300">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-pulse rounded-full bg-cyan-400 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-400" />
-              </span>
-              <span>Open for full-stack roles & collaboration</span>
-            </div>
-
-            {/* Premium Heading with Depth */}
-            <div className="space-y-4">
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tighter text-white leading-[1.15]">
-                Hey, I'm {owner?.name || 'Developer'}
-              </h1>
-              <div className="inline-block">
-                <p className="text-4xl sm:text-5xl lg:text-6xl font-extrabold bg-gradient-to-r from-cyan-300 via-sky-200 to-blue-300 bg-clip-text text-transparent">
-                  Full-Stack Engineer
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-400">
+                  Full-Stack Developer
                 </p>
               </div>
-            </div>
 
-            {/* Premium Description */}
-            <p className="text-lg text-slate-300 leading-relaxed max-w-2xl font-light tracking-wide">
-              I craft elegant solutions for complex problems. Specializing in <span className="text-cyan-300 font-semibold">React/Next.js</span> frontends, <span className="text-cyan-300 font-semibold">scalable APIs</span>, and <span className="text-cyan-300 font-semibold">optimized databases</span> that perform at scale.
-            </p>
+              <h1 className="mt-4 max-w-3xl text-[2.75rem] font-semibold leading-[1.03] tracking-[-0.045em] text-white sm:text-5xl lg:text-[4.35rem]">
+                I build dependable software{' '}
+                <span className="text-slate-400">
+                  from interface to backend.
+                </span>
+              </h1>
 
-            {/* Premium CTA Buttons */}
-            <div className="flex flex-wrap items-center gap-4 pt-4">
-              {/* Primary Button - Enhanced */}
-              <Link
-                href="#work"
-                className="group relative inline-flex h-12 items-center justify-center gap-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-600 px-6 text-sm font-bold text-slate-950 shadow-lg shadow-cyan-500/30 transition-all duration-300 hover:shadow-cyan-500/50 hover:scale-105 active:scale-100"
-              >
-                <span>View My Work</span>
-                <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-              </Link>
+              <p className="mt-6 max-w-2xl text-[15px] leading-7 text-slate-400 sm:text-base sm:leading-8">
+                I design and develop modern web applications across the
+                frontend, backend, APIs, and data layer — combining thoughtful
+                interfaces with practical engineering that is built to scale
+                with the product.
+              </p>
 
-              {/* Secondary Button - Elevated */}
-              <Link
-                href="https://drive.google.com/file/d/1G6pPYL-wMnGp6K3BJzn4SOmFdXYjacBH/edit"
-                target="_blank"
-                className="group inline-flex h-12 items-center justify-center gap-2.5 rounded-lg border border-slate-700/80 bg-slate-900/40 px-6 text-sm font-semibold text-slate-200 backdrop-blur-sm transition-all duration-300 hover:border-cyan-500/60 hover:bg-slate-800/60 hover:text-cyan-300 hover:shadow-lg hover:shadow-cyan-500/20"
-              >
-                <span>Download Resume</span>
-                <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-              </Link>
-
-              {/* Contact Button */}
-              {owner?.email && (
-                <a
-                  href={`mailto:${owner.email}`}
-                  className="inline-flex h-12 items-center justify-center gap-2.5 rounded-lg border border-slate-700/80 bg-slate-900/30 px-6 text-sm font-semibold text-slate-200 backdrop-blur-sm transition-all duration-300 hover:border-slate-600 hover:bg-slate-800/40 hover:text-white"
+              {/* Actions */}
+              <div className="mt-7 flex flex-wrap items-center gap-3">
+                <Link
+                  href="#work"
+                  className="group inline-flex h-11 items-center gap-2 rounded-lg bg-cyan-400 px-5 text-sm font-semibold text-slate-950 transition-colors duration-200 hover:bg-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-300/40"
                 >
-                  <Mail className="h-4 w-4" />
-                  <span>Get in Touch</span>
+                  Explore my work
+                  <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </Link>
+
+                <a
+                  href="https://drive.google.com/file/d/1G6pPYL-wMnGp6K3BJzn4SOmFdXYjacBH/edit"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex h-11 items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/40 px-5 text-sm font-medium text-slate-200 transition-colors duration-200 hover:border-slate-700 hover:bg-slate-900"
+                >
+                  View resume
+                  <ArrowUpRight className="h-4 w-4" />
                 </a>
-              )}
+
+                {owner?.email && (
+                  <a
+                    href={`mailto:${owner.email}`}
+                    className="inline-flex h-11 items-center gap-2 rounded-lg px-2 text-sm font-medium text-slate-400 transition-colors duration-200 hover:text-white"
+                  >
+                    <Mail className="h-4 w-4" />
+                    Contact
+                  </a>
+                )}
+              </div>
+
+              {/* Stack */}
+              <div className="mt-9 border-t border-slate-800 pt-5">
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-600">
+                    Working across
+                  </span>
+
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-slate-400">
+                    <span>React</span>
+                    <span className="text-slate-700">•</span>
+                    <span>Next.js</span>
+                    <span className="text-slate-700">•</span>
+                    <span>Node.js</span>
+                    <span className="text-slate-700">•</span>
+                    <span>APIs</span>
+                    <span className="text-slate-700">•</span>
+                    <span>Databases</span>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Stats Section - Premium Version */}
-            <div className="grid grid-cols-3 gap-8 pt-12 border-t border-slate-700/50">
-              <div className="group space-y-2">
-                <p className="text-2xl font-bold text-white group-hover:text-cyan-300 transition-colors">Full-Stack</p>
-                <p className="text-xs text-slate-400 font-medium uppercase tracking-wide">End-to-End Delivery</p>
-              </div>
-              <div className="group space-y-2">
-                <p className="text-2xl font-bold text-white group-hover:text-cyan-300 transition-colors">{projects.length}+</p>
-                <p className="text-xs text-slate-400 font-medium uppercase tracking-wide">Projects Built</p>
-              </div>
-              <div className="group space-y-2">
-                <p className="text-2xl font-bold text-white group-hover:text-cyan-300 transition-colors">Premium</p>
-                <p className="text-xs text-slate-400 font-medium uppercase tracking-wide">Quality Assured</p>
-              </div>
-            </div>
-          </div>
+            {/* Right */}
+            <div className="lg:justify-self-end lg:w-full lg:max-w-[390px]">
+              <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/30">
+                {owner?.image ? (
+                  <div className="relative aspect-[4/4.4] overflow-hidden bg-slate-950">
+                    <Image
+                      src={owner.image}
+                      alt={owner.name || 'Profile'}
+                      fill
+                      priority
+                      unoptimized
+                      sizes="(max-width: 1024px) 100vw, 390px"
+                      className="object-cover object-center"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex aspect-[4/4.4] items-center justify-center bg-slate-950">
+                    <span className="font-mono text-xs text-slate-600">
+                      profile image unavailable
+                    </span>
+                  </div>
+                )}
 
-          {/* Premium Profile Card */}
-          <div className="lg:col-span-5 relative z-10">
-            <div className="group relative">
-              {/* Outer glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-indigo-500/10 rounded-2xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-              
-              {/* Main card */}
-              <div className="relative rounded-2xl border border-slate-700/60 bg-gradient-to-b from-slate-900/80 via-slate-950/90 to-slate-950/80 p-1 backdrop-blur-xl shadow-2xl">
-                
-                {/* Inner content */}
-                <div className="rounded-[14px] border border-slate-700/40 bg-slate-950/70 p-6 space-y-6 backdrop-blur-sm">
+                <div className="flex items-center justify-between gap-4 border-t border-slate-800 px-5 py-4">
+                  <div>
+                    <p className="text-sm font-semibold text-white">
+                      {owner?.name || 'Developer'}
+                    </p>
 
-                  {/* Terminal Header */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-cyan-300">
-                      <Sparkles className="h-3 w-3" />
-                      <span>Profile Core</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <div className="h-2.5 w-2.5 rounded-full bg-red-500/70" />
-                      <div className="h-2.5 w-2.5 rounded-full bg-amber-500/70" />
-                      <div className="h-2.5 w-2.5 rounded-full bg-emerald-500/70" />
-                    </div>
+                    <p className="mt-1 text-xs text-slate-500">
+                      Full-Stack Developer
+                    </p>
                   </div>
 
-                  {/* Profile Image */}
-                  {owner?.image ? (
-                    <div className="overflow-hidden rounded-xl border border-slate-700/60 bg-slate-900">
-                      <div className="relative h-80 w-full overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900">
-                        <Image
-                          src={owner.image}
-                          alt={owner.name || 'Profile'}
-                          fill
-                          className="object-cover object-center transition-transform duration-700 hover:scale-110"
-                          unoptimized
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="h-72 rounded-xl border border-dashed border-slate-700/60 bg-slate-900/40 flex items-center justify-center">
-                      <p className="text-xs text-slate-500 font-mono">awaiting image</p>
-                    </div>
-                  )}
+                  <div className="text-right">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-600">
+                      Focus
+                    </p>
 
-                  {/* Tech Stack - Premium Cards */}
-                  <div className="space-y-3">
-                    {[
-                      { label: 'React & Node.js', icon: Layout, accent: 'from-cyan-500/30 to-cyan-500/10' },
-                      { label: 'APIs & Backend', icon: Code2, accent: 'from-blue-500/30 to-blue-500/10' },
-                      { label: 'Databases & Prisma', icon: Database, accent: 'from-indigo-500/30 to-indigo-500/10' },
-                    ].map((tech, i) => (
-                      <div 
-                        key={i} 
-                        className={`group/tech flex items-center gap-3 text-xs font-semibold text-slate-200 bg-gradient-to-r ${tech.accent} border border-slate-700/60 p-3.5 rounded-xl transition-all duration-300 hover:border-cyan-500/40 hover:bg-gradient-to-r hover:from-cyan-500/20 hover:to-cyan-500/5 hover:shadow-lg hover:shadow-cyan-500/10 cursor-default`}
-                      >
-                        <tech.icon className="h-4 w-4 text-cyan-300 shrink-0 group-hover/tech:text-cyan-200 transition-colors" />
-                        <span className="group-hover/tech:text-cyan-200 transition-colors">{tech.label}</span>
-                      </div>
-                    ))}
+                    <p className="mt-1 text-xs text-slate-400">
+                      Product · Engineering
+                    </p>
                   </div>
-
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* About Section - Premium Redesign */}
-        <section className="relative mx-auto max-w-7xl px-6 py-24 border-t border-slate-800/50">
-          <div className="grid gap-16 lg:grid-cols-12 lg:items-center">
+        {/* =========================================================
+            2. ABOUT
+        ========================================================== */}
+        <section
+          id="about"
+          className="scroll-mt-20 border-t border-slate-800/80"
+        >
+          <div className="mx-auto max-w-7xl px-6 py-14 sm:py-16 lg:px-8 lg:py-20">
+            <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+              {/* Left */}
+              <div className="lg:pt-1">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-400">
+                  About
+                </p>
 
-            <div className="lg:col-span-5 space-y-6">
-              <div className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-cyan-300">
-                <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
-                About & Philosophy
-              </div>
-              <h2 className="text-4xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
-                Engineering with <span className="text-transparent bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text">purpose</span>.
-              </h2>
-            </div>
-
-            <div className="lg:col-span-7">
-              <div className="group relative">
-                {/* Glow background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-indigo-500/5 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-                
-                {/* Card */}
-                <div className="relative rounded-3xl border border-slate-700/50 bg-gradient-to-br from-slate-900/60 to-slate-950/80 p-8 md:p-10 backdrop-blur-xl shadow-xl transition-all duration-300 group-hover:border-cyan-500/30">
-                  <p className="text-base leading-relaxed text-slate-300 font-light tracking-wide">
-                    I bridge creative design with robust technical architecture. My philosophy centers on crafting clean, maintainable code that delivers exceptional performance and seamless user experiences. Every project is an opportunity to push the boundaries of what's possible.
-                  </p>
-                  <div className="mt-8 pt-8 border-t border-slate-700/50 grid grid-cols-2 gap-6">
-                    {[
-                      { icon: '⚡', label: 'Clean Architecture' },
-                      { icon: '🎯', label: 'Scalable Design' },
-                      { icon: '🔒', label: 'Secure by Default' },
-                      { icon: '✨', label: 'Delightful UX' },
-                    ].map((item, i) => (
-                      <div key={i} className="space-y-2">
-                        <div className="text-xl">{item.icon}</div>
-                        <p className="text-xs font-semibold text-slate-300 uppercase tracking-wide">{item.label}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        {/* Projects Section - Premium */}
-        <section id="work" className="relative mx-auto max-w-7xl px-6 py-24 border-t border-slate-800/50 overflow-hidden">
-
-          <div className="relative z-10 space-y-12">
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <div className="space-y-4">
-                <div className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-cyan-300">
-                  <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
-                  Featured Work
-                </div>
-                <h2 className="text-4xl sm:text-5xl font-bold tracking-tight text-white">
-                  Showcase of Excellence
+                <h2 className="mt-3 max-w-md text-3xl font-semibold leading-tight tracking-[-0.035em] text-white sm:text-4xl">
+                  I care about how software is built, not just how it looks.
                 </h2>
-                <p className="text-sm text-slate-400 max-w-lg font-light leading-relaxed">
-                  A curated selection of projects that demonstrate full-stack expertise, creative problem-solving, and attention to detail.
+
+                <p className="mt-4 max-w-md text-sm leading-7 text-slate-500">
+                  Good products need both thoughtful interfaces and solid
+                  engineering underneath them. That balance shapes the way I
+                  work.
+                </p>
+              </div>
+
+              {/* Right */}
+              <div className="max-w-3xl">
+                <p className="text-base leading-7 text-slate-300 sm:text-[17px] sm:leading-8">
+                  I enjoy turning ideas into software that feels simple to use
+                  and makes sense to maintain. My work spans the interface,
+                  application logic, APIs, and data layer, so I can think about
+                  a product as a complete system rather than a collection of
+                  separate parts.
+                </p>
+
+                <p className="mt-4 text-sm leading-7 text-slate-500 sm:text-[15px]">
+                  I usually start with the real problem, keep the architecture
+                  as simple as the requirements allow, and give extra attention
+                  to the details that affect usability and long-term
+                  maintainability.
+                </p>
+
+                {/* Principles */}
+                <div className="mt-8 border-y border-slate-800">
+                  <div className="grid sm:grid-cols-3 sm:divide-x sm:divide-slate-800">
+                    <div className="py-5 sm:pr-6">
+                      <div className="flex items-center gap-3">
+                        <Layout className="h-4 w-4 text-cyan-400" />
+                        <h3 className="text-sm font-semibold text-white">
+                          Clear interfaces
+                        </h3>
+                      </div>
+
+                      <p className="mt-2 text-xs leading-6 text-slate-500">
+                        Interfaces should guide people naturally, not make them
+                        think about the interface itself.
+                      </p>
+                    </div>
+
+                    <div className="border-t border-slate-800 py-5 sm:border-t-0 sm:px-6">
+                      <div className="flex items-center gap-3">
+                        <Code2 className="h-4 w-4 text-cyan-400" />
+                        <h3 className="text-sm font-semibold text-white">
+                          Simple architecture
+                        </h3>
+                      </div>
+
+                      <p className="mt-2 text-xs leading-6 text-slate-500">
+                        Prefer understandable systems and abstractions that
+                        solve a real problem.
+                      </p>
+                    </div>
+
+                    <div className="border-t border-slate-800 py-5 sm:border-t-0 sm:pl-6">
+                      <div className="flex items-center gap-3">
+                        <Database className="h-4 w-4 text-cyan-400" />
+                        <h3 className="text-sm font-semibold text-white">
+                          Built to evolve
+                        </h3>
+                      </div>
+
+                      <p className="mt-2 text-xs leading-6 text-slate-500">
+                        Code, APIs, and data models should remain useful as the
+                        product grows.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* =========================================================
+            3. WORK
+        ========================================================== */}
+        <section
+          id="work"
+          className="scroll-mt-20 border-t border-slate-800/80"
+        >
+          <div className="mx-auto max-w-7xl px-6 py-14 sm:py-16 lg:px-8 lg:py-20">
+            {/* Header */}
+            <div className="flex items-end justify-between gap-6">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-400">
+                  Selected Work
+                </p>
+
+                <h2 className="mt-3 text-3xl font-semibold leading-tight tracking-[-0.035em] text-white sm:text-4xl">
+                  Projects that show how I build.
+                </h2>
+
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-500 sm:text-[15px]">
+                  A selection of applications and systems built across product
+                  interfaces, backend services, APIs, and data.
                 </p>
               </div>
 
               <Link
                 href="/projects"
-                className="group inline-flex items-center gap-2.5 rounded-xl border border-slate-700/60 bg-slate-900/40 px-5 py-3 text-sm font-semibold text-slate-300 backdrop-blur-sm transition-all duration-300 hover:border-cyan-500/50 hover:bg-slate-800/60 hover:text-cyan-300 hover:shadow-lg hover:shadow-cyan-500/10"
+                className="group hidden shrink-0 items-center gap-2 text-sm font-medium text-slate-400 transition-colors duration-200 hover:text-white sm:inline-flex"
               >
-                <span>See All Projects</span>
-                <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                All projects
+                <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </Link>
             </div>
 
-            {/* Projects Grid */}
-            <div className="grid gap-8 md:grid-cols-2">
-              {projects.length ? (
-                projects.map((p) => (
-                  <div
-                    key={p.id}
-                    className="group relative"
+            {/* Projects */}
+            {projects.length > 0 ? (
+              <div className="mt-9 grid gap-5 md:grid-cols-2">
+                {projects.map((project, index) => (
+                  <article
+                    key={project.id}
+                    className={`
+                      group rounded-2xl border border-slate-800
+                      bg-slate-900/25 p-5
+                      transition-colors duration-200
+                      hover:border-slate-700 hover:bg-slate-900/40
+                      sm:p-6
+                      ${index === 0 ? 'md:col-span-2' : ''}
+                    `}
                   >
-                    {/* Hover glow */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-indigo-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                    
-                    {/* Card */}
-                    <div className="relative rounded-2xl border border-slate-700/60 bg-gradient-to-b from-slate-900/50 to-slate-950/80 p-1 transition-all duration-300 group-hover:border-cyan-500/40 group-hover:shadow-2xl group-hover:shadow-cyan-500/10">
-                      <div className="rounded-[13px] bg-slate-950/60 p-6 h-full backdrop-blur-sm">
-                        <ProjectCard
-                          slug={p.slug}
-                          title={p.title}
-                          description={p.description || ''}
-                          tags={p.githubUrl || p.liveUrl ? ['Live Project'] : []}
-                        />
+                    <div className={index === 0 ? 'max-w-4xl' : 'max-w-2xl'}>
+                      <div className="mb-5 flex items-center justify-between">
+                        <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-slate-600">
+                          {String(index + 1).padStart(2, '0')}
+                        </span>
+
+                        {(project.liveUrl || project.githubUrl) && (
+                          <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-slate-600">
+                            {project.liveUrl && project.githubUrl
+                              ? 'Live · Source'
+                              : project.liveUrl
+                                ? 'Live'
+                                : 'Source'}
+                          </span>
+                        )}
                       </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="col-span-full rounded-2xl border border-dashed border-slate-700/60 bg-slate-900/30 p-12 text-center">
-                  <p className="text-sm text-slate-400 font-mono">No projects available yet</p>
-                  <p className="text-xs text-slate-600 mt-2">Check back soon for latest projects</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
 
-        {/* Skills Section - Premium */}
-        <section id="skills" className="relative mx-auto max-w-7xl px-6 py-24 border-t border-slate-800/50">
-          <div className="space-y-12">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-cyan-300">
-                <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
-                Technical Arsenal
+                      <ProjectCard
+                        slug={project.slug}
+                        title={project.title}
+                        description={project.description || ''}
+                        tags={[]}
+                      />
+                    </div>
+                  </article>
+                ))}
               </div>
-              <h2 className="text-4xl sm:text-5xl font-bold tracking-tight text-white">
-                Technologies & Tools
-              </h2>
-              <p className="text-sm text-slate-400 max-w-lg font-light leading-relaxed">
-                A comprehensive toolkit of modern technologies and frameworks that empower me to build exceptional digital products.
-              </p>
-            </div>
+            ) : (
+              <div className="mt-9 rounded-2xl border border-dashed border-slate-800 p-8">
+                <p className="text-sm text-slate-500">
+                  Projects will appear here once they are added.
+                </p>
+              </div>
+            )}
 
-            {/* Skills Grid */}
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {skills.length ? (
-                skills.map((s) => (
-                  <div
-                    key={s.id}
-                    className="group relative flex items-center gap-3 rounded-xl border border-slate-700/60 bg-gradient-to-br from-slate-900/40 to-slate-950/60 p-4 transition-all duration-300 hover:border-cyan-500/40 hover:bg-gradient-to-br hover:from-cyan-500/10 hover:to-slate-950/80 hover:shadow-lg hover:shadow-cyan-500/10 hover:scale-105 cursor-default"
-                  >
-                    <div className="flex-shrink-0 rounded-lg bg-gradient-to-br from-cyan-500/20 to-cyan-500/5 p-2 text-cyan-300 transition-all group-hover:from-cyan-500/30 group-hover:to-cyan-500/10 group-hover:text-cyan-200">
-                      <Terminal className="h-4 w-4" />
-                    </div>
-                    <span className="text-sm font-semibold text-slate-200 group-hover:text-cyan-300 transition-colors tracking-wide">{s.name}</span>
-                  </div>
-                ))
-              ) : (
-                <div className="col-span-full rounded-xl border border-dashed border-slate-700/60 bg-slate-900/30 p-8 text-center">
-                  <p className="text-sm text-slate-400 font-mono">Skills coming soon...</p>
-                </div>
-              )}
+            {/* Mobile all-projects link */}
+            <div className="mt-7 sm:hidden">
+              <Link
+                href="/projects"
+                className="group inline-flex items-center gap-2 text-sm font-medium text-slate-400 transition-colors hover:text-white"
+              >
+                View all projects
+                <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </Link>
             </div>
           </div>
         </section>
 
-        {/* Experience Section - Premium */}
-        {experiences.length > 0 && (
-          <section id="experience" className="relative mx-auto max-w-7xl px-6 py-24 border-t border-slate-800/50">
-            <div className="space-y-12">
-              <div className="space-y-4">
-                <div className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-cyan-300">
-                  <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
-                  Career Path
-                </div>
-                <h2 className="text-4xl sm:text-5xl font-bold tracking-tight text-white">
-                  Professional Journey
+        {/* =========================================================
+            4. SKILLS
+        ========================================================== */}
+        <section
+          id="skills"
+          className="scroll-mt-20 border-t border-slate-800/80"
+        >
+          <div className="mx-auto max-w-7xl px-6 py-14 sm:py-16 lg:px-8 lg:py-20">
+            <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
+              {/* Intro */}
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-400">
+                  Skills
+                </p>
+
+                <h2 className="mt-3 max-w-md text-3xl font-semibold leading-tight tracking-[-0.035em] text-white sm:text-4xl">
+                  The stack I work with.
                 </h2>
-                <p className="text-sm text-slate-400 max-w-lg font-light leading-relaxed">
-                  A timeline of impactful roles, enterprise projects, and continuous growth in full-stack development.
+
+                <p className="mt-4 max-w-md text-sm leading-7 text-slate-500">
+                  A practical set of technologies I use across interfaces,
+                  application logic, APIs, databases, and delivery.
                 </p>
               </div>
 
-              {/* Experience Timeline */}
-              <div className="space-y-6">
-                {experiences.map((e, idx) => (
-                  <div
-                    key={e.id}
-                    className="group relative"
-                  >
-                    {/* Timeline line connector */}
-                    {idx !== experiences.length - 1 && (
-                      <div className="absolute left-6 top-20 w-0.5 h-12 bg-gradient-to-b from-cyan-500/40 to-transparent pointer-events-none" />
-                    )}
+              {/* Skills */}
+              <div>
+                {skills.length > 0 ? (
+                  (() => {
+                    const frontendKeywords = [
+                      'HTML',
+                      'CSS',
+                      'Tailwind',
+                      'React',
+                      'Next',
+                      'JavaScript',
+                      'TypeScript',
+                    ];
 
-                    {/* Hover glow */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-indigo-500/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                    
-                    {/* Card */}
-                    <div className="relative rounded-2xl border border-slate-700/60 bg-gradient-to-b from-slate-900/50 to-slate-950/80 p-6 md:p-8 backdrop-blur-sm transition-all duration-300 group-hover:border-cyan-500/40 group-hover:shadow-xl group-hover:shadow-cyan-500/5">
-                      
-                      <div className="flex items-start gap-6">
-                        {/* Timeline dot */}
-                        <div className="mt-1 h-3 w-3 rounded-full border-2 border-cyan-400 bg-slate-950 flex-shrink-0 relative z-10 shadow-lg shadow-cyan-500/30" />
-                        
-                        {/* Content */}
-                        <div className="flex-1 space-y-4">
-                          <div className="flex flex-wrap items-start justify-between gap-3">
-                            <div>
-                              <h3 className="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors">
-                                {e.role}
-                              </h3>
-                              <p className="text-sm text-slate-400 mt-1">
-                                at <span className="text-cyan-300 font-semibold">{e.company}</span>
-                              </p>
+                    const backendKeywords = [
+                      'Node',
+                      'Express',
+                      'API',
+                      'REST',
+                      'Authentication',
+                    ];
+
+                    const dataKeywords = [
+                      'PostgreSQL',
+                      'MySQL',
+                      'Mongo',
+                      'Prisma',
+                      'Redis',
+                      'Database',
+                    ];
+
+                    const toolsKeywords = [
+                      'Git',
+                      'GitHub',
+                      'Docker',
+                      'AWS',
+                      'CI/CD',
+                      'Testing',
+                    ];
+
+                    const includesAny = (
+                      name: string,
+                      keywords: string[],
+                    ) =>
+                      keywords.some((keyword) =>
+                        name.toLowerCase().includes(keyword.toLowerCase()),
+                      );
+
+                    const groups = [
+                      {
+                        title: 'Frontend',
+                        items: skills.filter((skill) =>
+                          includesAny(skill.name, frontendKeywords),
+                        ),
+                      },
+                      {
+                        title: 'Backend',
+                        items: skills.filter((skill) =>
+                          includesAny(skill.name, backendKeywords),
+                        ),
+                      },
+                      {
+                        title: 'Data',
+                        items: skills.filter((skill) =>
+                          includesAny(skill.name, dataKeywords),
+                        ),
+                      },
+                      {
+                        title: 'Tools',
+                        items: skills.filter((skill) =>
+                          includesAny(skill.name, toolsKeywords),
+                        ),
+                      },
+                    ];
+
+                    const groupedIds = new Set(
+                      groups.flatMap((group) =>
+                        group.items.map((item) => item.id),
+                      ),
+                    );
+
+                    const otherSkills = skills.filter(
+                      (skill) => !groupedIds.has(skill.id),
+                    );
+
+                    if (otherSkills.length) {
+                      groups.push({
+                        title: 'Other',
+                        items: otherSkills,
+                      });
+                    }
+
+                    return (
+                      <div className="grid gap-6 sm:grid-cols-2">
+                        {groups
+                          .filter((group) => group.items.length > 0)
+                          .map((group) => (
+                            <div key={group.title}>
+                              <div className="mb-3 flex items-center gap-3">
+                                <span className="h-px w-5 bg-cyan-400/70" />
+
+                                <h3 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
+                                  {group.title}
+                                </h3>
+                              </div>
+
+                              <div className="rounded-xl border border-slate-800 bg-slate-900/25">
+                                {group.items.map((skill, index) => (
+                                  <div
+                                    key={skill.id}
+                                    className={`flex items-center justify-between px-4 py-3 ${
+                                      index !== group.items.length - 1
+                                        ? 'border-b border-slate-800/80'
+                                        : ''
+                                    }`}
+                                  >
+                                    <span className="text-sm font-medium text-slate-300">
+                                      {skill.name}
+                                    </span>
+
+                                    <span className="text-[10px] text-slate-600">
+                                      {String(index + 1).padStart(2, '0')}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
-                            <div className="inline-flex items-center gap-2 rounded-full border border-slate-700/60 bg-slate-900/60 px-3 py-1.5 text-xs font-mono text-cyan-400 whitespace-nowrap">
-                              <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                              {e.isCurrent ? 'Present' : new Date(e.startDate).getFullYear()}
-                            </div>
-                          </div>
-                          
-                          <p className="text-sm leading-relaxed text-slate-300 font-light">
-                            {e.description}
-                          </p>
-                        </div>
+                          ))}
                       </div>
-                    </div>
+                    );
+                  })()
+                ) : (
+                  <div className="rounded-xl border border-dashed border-slate-800 p-7">
+                    <p className="text-sm text-slate-500">
+                      Skills will appear here once they are added.
+                    </p>
                   </div>
-                ))}
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* =========================================================
+            5. EDUCATION
+        ========================================================== */}
+        {education.length > 0 && (
+          <section
+            id="education"
+            className="scroll-mt-20 border-t border-slate-800/80"
+          >
+            <div className="mx-auto max-w-7xl px-6 py-14 sm:py-16 lg:px-8 lg:py-20">
+              <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
+                {/* Intro */}
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-400">
+                    Education
+                  </p>
+
+                  <h2 className="mt-3 max-w-md text-3xl font-semibold leading-tight tracking-[-0.035em] text-white sm:text-4xl">
+                    Academic background.
+                  </h2>
+
+                  <p className="mt-4 max-w-md text-sm leading-7 text-slate-500">
+                    The academic path behind my technical foundation and
+                    current learning journey.
+                  </p>
+                </div>
+
+                {/* Education */}
+                <div className="space-y-4">
+                  {education.map((item, index) => {
+                    const startYear = item.startDate
+                      ? new Date(item.startDate).getFullYear()
+                      : null;
+
+                    const endYear = item.endDate
+                      ? new Date(item.endDate).getFullYear()
+                      : 'Present';
+
+                    const isPrimary = index === 0;
+
+                    return (
+                      <article
+                        key={item.id}
+                        className={
+                          isPrimary
+                            ? 'rounded-2xl border border-slate-700 bg-slate-900/45 p-6 sm:p-7'
+                            : 'rounded-xl border border-slate-800 bg-slate-900/20 px-5 py-4'
+                        }
+                      >
+                        {isPrimary ? (
+                          <>
+                            <div className="flex flex-wrap items-start justify-between gap-4">
+                              <div className="flex items-center gap-3">
+                                <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-800 bg-slate-950 text-cyan-400">
+                                  <GraduationCap className="h-4 w-4" />
+                                </span>
+
+                                <div>
+                                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-cyan-400">
+                                    Current education
+                                  </p>
+
+                                  <p className="mt-1 text-xs text-slate-500">
+                                    {startYear
+                                      ? `${startYear} — ${endYear}`
+                                      : endYear}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+
+                            <h3 className="mt-6 text-xl font-semibold tracking-[-0.02em] text-white">
+                              {item.degree}
+                            </h3>
+
+                            <p className="mt-1 text-sm font-medium text-cyan-400">
+                              {item.institution}
+                            </p>
+
+                            {item.description && (
+                              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-400">
+                                {item.description}
+                              </p>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            <div className="flex items-start justify-between gap-5">
+                              <div className="min-w-0">
+                                <h3 className="text-base font-semibold text-white">
+                                  {item.degree}
+                                </h3>
+
+                                <p className="mt-1 text-sm font-medium text-slate-400">
+                                  {item.institution}
+                                </p>
+                              </div>
+
+                              <span className="shrink-0 text-[11px] text-slate-600">
+                                {startYear
+                                  ? `${startYear} — ${endYear}`
+                                  : endYear}
+                              </span>
+                            </div>
+
+                            {item.description && (
+                              <p className="mt-3 text-sm leading-6 text-slate-500">
+                                {item.description}
+                              </p>
+                            )}
+                          </>
+                        )}
+                      </article>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </section>
         )}
 
-        {/* Contact Section - Premium */}
-        <section id="contact" className="relative mx-auto max-w-7xl px-6 py-28 border-t border-slate-800/50 overflow-hidden">
+        {/* =========================================================
+            6. EXPERIENCE
+        ========================================================== */}
+        {experiences.length > 0 && (
+          <section
+            id="experience"
+            className="scroll-mt-20 border-t border-slate-800/80"
+          >
+            <div className="mx-auto max-w-7xl px-6 py-14 sm:py-16 lg:px-8 lg:py-20">
+              <div className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:gap-16">
+                {/* Intro */}
+                <div className="lg:pt-1">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-400">
+                    Experience
+                  </p>
 
-          {/* Background accents */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-cyan-500/10 blur-[150px] rounded-full" />
-            <div className="absolute top-0 left-1/3 w-96 h-96 bg-indigo-500/10 blur-[150px] rounded-full" />
-          </div>
+                  <h2 className="mt-3 max-w-md text-3xl font-semibold leading-tight tracking-[-0.035em] text-white sm:text-4xl">
+                    Experience that shaped how I build.
+                  </h2>
 
-          <div className="relative z-10 space-y-8">
-            {/* CTA Content */}
-            <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-3 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 text-xs font-semibold text-cyan-200 backdrop-blur-xl mb-6">
-                <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
-                Let's Collaborate
+                  <p className="mt-4 max-w-md text-sm leading-7 text-slate-500">
+                    Roles, responsibilities, and the kind of work I have taken
+                    on across products and development projects.
+                  </p>
+                </div>
+
+                {/* Experience list */}
+                <div className="divide-y divide-slate-800 border-y border-slate-800">
+                  {experiences.map((experience) => {
+                    const startYear = experience.startDate
+                      ? new Date(experience.startDate).getFullYear()
+                      : null;
+
+                    const endYear = experience.isCurrent
+                      ? 'Present'
+                      : experience.endDate
+                        ? new Date(experience.endDate).getFullYear()
+                        : null;
+
+                    return (
+                      <article
+                        key={experience.id}
+                        className="grid gap-4 py-6 sm:py-7 md:grid-cols-[130px_1fr] md:gap-8"
+                      >
+                        {/* Date */}
+                        <div className="pt-1">
+                          <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-slate-500">
+                            {startYear && endYear
+                              ? `${startYear} — ${endYear}`
+                              : startYear || endYear || 'Experience'}
+                          </p>
+                        </div>
+
+                        {/* Content */}
+                        <div>
+                          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                            <h3 className="text-lg font-semibold tracking-[-0.015em] text-white sm:text-xl">
+                              {experience.role}
+                            </h3>
+
+                            <span className="text-sm font-medium text-cyan-400">
+                              {experience.company}
+                            </span>
+                          </div>
+
+                          {experience.description && (
+                            <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400">
+                              {experience.description}
+                            </p>
+                          )}
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* =========================================================
+            7. CONTACT
+        ========================================================== */}
+        <section
+          id="contact"
+          className="scroll-mt-20 border-t border-slate-800/80"
+        >
+          <div className="mx-auto max-w-7xl px-6 py-14 sm:py-16 lg:px-8 lg:py-20">
+            <div className="grid gap-10 lg:grid-cols-[1fr_0.72fr] lg:items-center lg:gap-16">
+              {/* Left */}
+              <div className="max-w-2xl">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-400">
+                  Contact
+                </p>
+
+                <h2 className="mt-3 text-3xl font-semibold leading-tight tracking-[-0.035em] text-white sm:text-4xl lg:text-[2.7rem]">
+                  Let&apos;s talk about what you&apos;re building.
+                </h2>
+
+                <p className="mt-4 max-w-xl text-sm leading-7 text-slate-400 sm:text-[15px]">
+                  Have a product idea, a technical challenge, or an
+                  opportunity worth discussing? Send me a message and I&apos;ll
+                  get back to you.
+                </p>
               </div>
 
-              <h2 className="text-5xl sm:text-6xl font-bold tracking-tight text-white leading-tight mb-4">
-                Ready to <span className="text-transparent bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text">create something</span> amazing?
-              </h2>
+              {/* Right */}
+              <div className="lg:justify-self-end lg:w-full lg:max-w-md">
+                <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/25">
+                  {/* Email */}
+                  {owner?.email && (
+                    <a
+                      href={`mailto:${owner.email}`}
+                      className="group block border-b border-slate-800 p-5 transition-colors duration-200 hover:bg-slate-900/60"
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+                            Email
+                          </p>
 
-              <p className="text-lg text-slate-300 leading-relaxed font-light max-w-2xl">
-                Whether you're starting a new project, need technical expertise, or want to explore innovative ideas—I'm here to help turn your vision into reality.
-              </p>
-            </div>
+                          <p className="mt-2 break-all text-sm font-medium text-slate-200 transition-colors group-hover:text-cyan-300 sm:text-[15px]">
+                            {owner.email}
+                          </p>
+                        </div>
 
-            {/* Contact Buttons */}
-            <div className="flex flex-wrap items-center gap-4 pt-4">
-              {owner?.email && (
-                <a
-                  href={`mailto:${owner.email}`}
-                  className="group inline-flex items-center gap-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-600 px-6 py-3.5 text-sm font-bold text-slate-950 shadow-lg shadow-cyan-500/40 transition-all duration-300 hover:shadow-cyan-500/60 hover:scale-105 active:scale-100"
-                >
-                  <Mail className="h-4 w-4" />
-                  <span>{owner.email}</span>
-                </a>
-              )}
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-800 text-slate-500 transition-colors group-hover:border-cyan-400/30 group-hover:text-cyan-300">
+                          <Mail className="h-4 w-4" />
+                        </span>
+                      </div>
+                    </a>
+                  )}
 
-              {owner?.githubUrl && (
-                <a
-                  href={owner.githubUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group inline-flex items-center gap-2.5 rounded-lg border border-slate-700/60 bg-slate-900/40 px-6 py-3.5 text-sm font-semibold text-slate-200 backdrop-blur-sm transition-all duration-300 hover:border-cyan-500/40 hover:bg-slate-800/60 hover:text-cyan-300 hover:shadow-lg hover:shadow-cyan-500/10"
-                >
-                  <Github className="h-4 w-4" />
-                  <span>GitHub</span>
-                </a>
-              )}
+                  {/* Social links */}
+                  <div className="grid sm:grid-cols-3">
+                    {owner?.githubUrl && (
+                      <a
+                        href={owner.githubUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="group flex items-center justify-between border-b border-slate-800 px-5 py-4 transition-colors duration-200 hover:bg-slate-900/60 sm:border-b-0 sm:border-r"
+                      >
+                        <span className="text-sm font-medium text-slate-400 transition-colors group-hover:text-white">
+                          GitHub
+                        </span>
 
-              {owner?.linkedinUrl && (
-                <a
-                  href={owner.linkedinUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group inline-flex items-center gap-2.5 rounded-lg border border-slate-700/60 bg-slate-900/40 px-6 py-3.5 text-sm font-semibold text-slate-200 backdrop-blur-sm transition-all duration-300 hover:border-cyan-500/40 hover:bg-slate-800/60 hover:text-cyan-300 hover:shadow-lg hover:shadow-cyan-500/10"
-                >
-                  <Linkedin className="h-4 w-4" />
-                  <span>LinkedIn</span>
-                </a>
-              )}
+                        <Github className="h-4 w-4 text-slate-600 transition-colors group-hover:text-cyan-300" />
+                      </a>
+                    )}
 
-              {owner?.xUrl && (
-                <a
-                  href={owner.xUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group inline-flex items-center gap-2.5 rounded-lg border border-slate-700/60 bg-slate-900/40 px-6 py-3.5 text-sm font-semibold text-slate-200 backdrop-blur-sm transition-all duration-300 hover:border-sky-500/40 hover:bg-slate-800/60 hover:text-sky-300 hover:shadow-lg hover:shadow-sky-500/10"
-                >
-                  <Twitter className="h-4 w-4" />
-                  <span>Twitter</span>
-                </a>
-              )}
+                    {owner?.linkedinUrl && (
+                      <a
+                        href={owner.linkedinUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="group flex items-center justify-between border-b border-slate-800 px-5 py-4 transition-colors duration-200 hover:bg-slate-900/60 sm:border-b-0 sm:border-r"
+                      >
+                        <span className="text-sm font-medium text-slate-400 transition-colors group-hover:text-white">
+                          LinkedIn
+                        </span>
+
+                        <Linkedin className="h-4 w-4 text-slate-600 transition-colors group-hover:text-cyan-300" />
+                      </a>
+                    )}
+
+                    {owner?.xUrl && (
+                      <a
+                        href={owner.xUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="group flex items-center justify-between px-5 py-4 transition-colors duration-200 hover:bg-slate-900/60"
+                      >
+                        <span className="text-sm font-medium text-slate-400 transition-colors group-hover:text-white">
+                          X
+                        </span>
+
+                        <Twitter className="h-4 w-4 text-slate-600 transition-colors group-hover:text-cyan-300" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+
+                <p className="mt-3 text-[11px] text-slate-600">
+                  Prefer email for project and collaboration enquiries.
+                </p>
+              </div>
             </div>
           </div>
         </section>
-
       </main>
 
       <Footer />
